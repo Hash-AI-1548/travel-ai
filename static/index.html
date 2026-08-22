@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel AI — Next-Gen Personalization</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Top Nav Bar -->
+    <header class="top-nav">
+      <div class="api-links">
+        <a href="/docs" target="_blank" class="badge-link">⚡ Interactive OpenAPI Docs</a>
+        <a href="/health" target="_blank" class="badge-link">Health Check</a>
+      </div>
+      <div id="auth-status" class="auth-pill">
+        <span id="user-display" style="font-weight:700;">Guest Traveler</span>
+        <button id="auth-btn" class="btn-sm" onclick="showAuthModal()">Sign In / Register</button>
+        <button id="signout-btn" class="btn-sm" onclick="logout()" style="display:none; background:#FFF0F0; color:#D32F2F; border:1px solid #FFCDD2; margin-left:8px; font-weight:700; cursor:pointer;">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- Main Application Layout -->
+    <div class="app-layout">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <div class="logo" onclick="goToStep(1)" style="cursor: pointer;">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          </svg>
+          <span class="logo-text">Travel AI</span>
+        </div>
+
+        <nav class="steps-nav" id="steps-nav">
+          <div class="nav-step active" id="nav-step-1" onclick="goToStep(1)">
+            <div class="step-num" id="nav-num-1">1</div>
+            <span class="step-label">Personal Info</span>
+          </div>
+          <div class="nav-step" id="nav-step-2" onclick="goToStep(2)">
+            <div class="step-num" id="nav-num-2">2</div>
+            <span class="step-label">Traveler Type</span>
+          </div>
+          <div class="nav-step" id="nav-step-3" onclick="goToStep(3)">
+            <div class="step-num" id="nav-num-3">3</div>
+            <span class="step-label">Accessibility</span>
+          </div>
+          <div class="nav-step" id="nav-step-4" onclick="goToStep(4)">
+            <div class="step-num" id="nav-num-4">4</div>
+            <span class="step-label">Travel Style</span>
+          </div>
+          <div class="nav-step" id="nav-step-5" onclick="goToStep(5)">
+            <div class="step-num" id="nav-num-5">5</div>
+            <span class="step-label">Food</span>
+          </div>
+          <div class="nav-step" id="nav-step-6" onclick="goToStep(6)">
+            <div class="step-num" id="nav-num-6">6</div>
+            <span class="step-label">Clothing</span>
+          </div>
+          <div class="nav-step" id="nav-step-7" onclick="goToStep(7)">
+            <div class="step-num" id="nav-num-7">7</div>
+            <span class="step-label">Budget</span>
+          </div>
+          <div class="nav-step" id="nav-step-8" onclick="goToStep(8)">
+            <div class="step-num" id="nav-num-8">8</div>
+            <span class="step-label">Summary</span>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="secure-tag">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Secure Profile Setup</span>
+          </div>
+          <p class="secure-desc">Your travel preferences are stored securely and calibrated exclusively for your custom itineraries.</p>
+        </div>
+      </aside>
+
+      <!-- Main Content Panel -->
+      <main class="content-panel">
+        <div class="step-progress-wrapper">
+          <span class="step-counter" id="step-counter">STEP 1 OF 8</span>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width: 12.5%;"></div>
+          </div>
+        </div>
+
+        <!-- ==================== STEP 1: PERSONAL INFO ==================== -->
+        <section id="step-section-1" class="step-section">
+          <h2 class="step-title">Tell us about yourself</h2>
+          <p class="step-subtitle">We'll use this basic metadata to formulate age-appropriate, region-contextual flight and stay arrangements.</p>
+          
+          <div class="form-grid-2">
+            <div>
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="inp-fullname" value="Evelyn Thorne" placeholder="e.g. Evelyn Thorne" oninput="passport.full_name = this.value">
+              </div>
+              
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label>Age</label>
+                  <input type="number" id="inp-age" value="29" placeholder="29" min="1" max="120" oninput="passport.age = parseInt(this.value) || 29">
+                </div>
+                <div class="form-group">
+                  <label>Gender (optional)</label>
+                  <select id="inp-gender" onchange="passport.gender = this.value">
+                    <option value="Female" selected>Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Non-binary">Non-binary</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Nationality / Citizenship</label>
+                <input type="text" id="inp-nationality" list="nationalities-list" value="Indian" placeholder="e.g. Indian, Canadian, American, British, Australian..." oninput="passport.nationality = this.value">
+                <datalist id="nationalities-list">
+                  <option value="Indian">
+                  <option value="American">
+                  <option value="Canadian">
+                  <option value="British">
+                  <option value="Australian">
+                  <option value="French">
+                  <option value="German">
+                  <option value="Japanese">
+                  <option value="Spanish">
+                  <option value="Italian">
+                  <option value="Brazilian">
+                  <option value="Chinese">
+                  <option value="Mexican">
+                  <option value="Dutch">
+                  <option value="Swedish">
+                  <option value="Swiss">
+                  <option value="Irish">
+                  <option value="Singaporean">
+                  <option value="South Korean">
+                  <option value="Emirati">
+                  <option value="Saudi">
+                </datalist>
+              </div>
+
+              <div class="form-group">
+                <label>Home City</label>
+                <input type="text" id="inp-homecity" value="Mumbai" placeholder="e.g. Mumbai | Vancouver | London | Tokyo" oninput="passport.home_city = this.value">
+              </div>
+            </div>
+
+            <div>
+              <label style="font-size:13px; font-weight:700; display:block; margin-bottom:10px;">Profile Picture (optional)</label>
+              <div class="avatar-dropzone" id="avatar-dropzone" onclick="document.getElementById('avatar-file').click()">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#697874" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span style="font-size:11px; color:#697874; margin-top:6px;">Drag & drop or Click to upload</span>
+              </div>
+              <input type="file" id="avatar-file" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+              <div style="text-align:center; font-size:11px; color:#697874; margin-top:6px;">JPG, PNG up to 5MB</div>
+            </div>
+          </div>
+
+          <!-- SEARCHABLE UNLIMITED MULTI-SELECT LANGUAGE BOX -->
+          <div class="form-group" style="margin-top: 10px;">
+            <label>Languages Spoken (Search, Add & Multi-Select)</label>
+            <div class="lang-search-wrapper">
+              <input type="text" id="lang-search-input" 
+                     placeholder="Type to search worldwide languages (e.g., Hindi, Spanish, Japanese, French, Dutch) or enter custom language..." 
+                     autocomplete="off"
+                     oninput="handleLanguageSearch(this.value)"
+                     onkeydown="handleLanguageKeydown(event)">
+              <button type="button" class="btn-add-lang" onclick="addCustomLanguageFromInput()">+ Add</button>
+              <div id="lang-suggestions" class="lang-suggestions-dropdown"></div>
+            </div>
+
+            <div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-top:12px;">Selected Languages (<span id="lang-count">2</span>):</div>
+            <div class="selected-langs-box" id="selected-langs-box">
+              <span class="selected-lang-chip">English <span class="chip-remove" onclick="removeLanguage('English')">&times;</span></span>
+              <span class="selected-lang-chip">Hindi <span class="chip-remove" onclick="removeLanguage('Hindi')">&times;</span></span>
+            </div>
+
+            <div style="margin-top: 16px;">
+              <span style="font-size:12px; font-weight:700; color:var(--text-muted);">Quick-add Popular Languages:</span>
+              <div class="tag-container" id="popular-langs-container" style="margin-top:6px;">
+                <div class="pill-tag selected" onclick="toggleLanguage('English', this)">English &#10003;</div>
+                <div class="pill-tag" onclick="toggleLanguage('French', this)">French +</div>
+                <div class="pill-tag" onclick="toggleLanguage('Spanish', this)">Spanish +</div>
+                <div class="pill-tag" onclick="toggleLanguage('Japanese', this)">Japanese +</div>
+                <div class="pill-tag" onclick="toggleLanguage('German', this)">German +</div>
+                <div class="pill-tag selected" onclick="toggleLanguage('Hindi', this)">Hindi &#10003;</div>
+                <div class="pill-tag" onclick="toggleLanguage('Arabic', this)">Arabic +</div>
+                <div class="pill-tag" onclick="toggleLanguage('Korean', this)">Korean +</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CUSTOM TEXTBOX AT BOTTOM OF STEP 1 -->
+          <div class="form-group" style="margin-top: 24px; border-top: 1px dashed var(--border-color); padding-top: 18px;">
+            <label>Other Personal Notes / Special Trip Context (Optional)</label>
+            <textarea id="inp-personal-notes" rows="2" 
+                      placeholder="Enter anything else about yourself, special occasion, anniversary, or traveler details..."
+                      oninput="passport.personal_notes = this.value">Celebrating 5th wedding anniversary</textarea>
+          </div>
+        </section>
+
+        <!-- ==================== STEP 2: TRAVELER TYPE ==================== -->
+        <section id="step-section-2" class="step-section" style="display: none;">
+          <h2 class="step-title">What kind of traveler are you?</h2>
+          <p class="step-subtitle">Your primary traveling configuration modifies the pace, accommodation configurations, and evening entertainment models.</p>
+          
+          <div class="card-grid-4">
+            <div class="select-card" onclick="selectTravelerType('solo', this)">
+              <div class="select-card-header">
+                <div class="card-icon">&#9678;</div>
+                <div class="card-radio"></div>
+              </div>
+              <div class="card-title">Solo</div>
+              <div class="card-desc">Autonomous self-guided paths, flexible schedules, single rooms.</div>
+            </div>
+
+            <div class="select-card selected" onclick="selectTravelerType('couple', this)">
+              <div class="select-card-header">
+                <div class="card-icon">&#9678;</div>
+                <div class="card-radio"></div>
+              </div>
+              <div class="card-title">Couple</div>
+              <div class="card-desc">Romantic stays, fine dining, intimate private tour routes.</div>
+            </div>
+
+            <div class="select-card" onclick="selectTravelerType('family', this)">
+              <div class="select-card-header">
+                <div class="card-icon">&#9678;</div>
+                <div class="card-radio"></div>
+              </div>
+              <div class="card-title">Family</div>
+              <div class="card-desc">Kid-friendly attractions, multi-room suites, gentle transit pace.</div>
+            </div>
+
+            <div class="select-card" onclick="selectTravelerType('friends', this)">
+              <div class="select-card-header">
+                <div class="card-icon">&#9678;</div>
+                <div class="card-radio"></div>
+              </div>
+              <div class="card-title">Friends</div>
+              <div class="card-desc">Group activities, high-energy spots, shared budgets, double beds.</div>
+            </div>
+
+            <div class="select-card" onclick="selectTravelerType('senior', this)">
+              <div class="select-card-header">
+                <div class="card-icon">&#9678;</div>
+                <div class="card-radio"></div>
+              </div>
+              <div class="card-title">Senior Traveler</div>
+              <div class="card-desc">Comfortable transit, accessible walks, deep cultural pacing.</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 28px; border-top: 1px dashed var(--border-color); padding-top: 18px;">
+            <label>Other / Custom Group Setup (Optional)</label>
+            <input type="text" id="inp-traveler-type-custom" 
+                   value="" 
+                   placeholder="e.g. Traveling with a pet, multi-generational family (3 adults + 2 toddlers), digital nomad group..."
+                   oninput="passport.traveler_type_custom = this.value">
+          </div>
+        </section>
+
+        <!-- ==================== STEP 3: ACCESSIBILITY & COMFORT ==================== -->
+        <section id="step-section-3" class="step-section" style="display: none;">
+          <h2 class="step-title">Accessibility & comfort options</h2>
+          <p class="step-subtitle">Completely optional. Select any specific needs so our AI automatically excludes stays with stairs, filters for sensory-friendly spots, or highlights elevators.</p>
+          
+          <div class="toggle-list">
+            <div class="toggle-card active">
+              <div class="toggle-info">
+                <h4>Mobility / Wheelchair Access</h4>
+                <p>No stairs, step-free entries, extra wide doorways, roll-in showers.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk-mobility" checked onchange="toggleAccessibility('accessibility_mobility', this)">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-card">
+              <div class="toggle-info">
+                <h4>Visual Assistance friendly</h4>
+                <p>High-contrast markings, braille signs, audio guides, guide-dog friendly stays.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk-visual" onchange="toggleAccessibility('accessibility_visual', this)">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-card">
+              <div class="toggle-info">
+                <h4>Hearing / Audio support</h4>
+                <p>Visual fire alarms, captioned assistance devices, vibration indicators.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk-hearing" onchange="toggleAccessibility('accessibility_hearing', this)">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-card">
+              <div class="toggle-info">
+                <h4>Elderly & Senior friendly</h4>
+                <p>Sturdy handrails, minimal walking distances, elevators highlighted.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk-senior" onchange="toggleAccessibility('accessibility_senior', this)">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-card">
+              <div class="toggle-info">
+                <h4>Child-friendly (Toddlers/Infants)</h4>
+                <p>Crib options, high chairs, safety gates available, stroller ramps.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk-child" onchange="toggleAccessibility('accessibility_child', this)">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-card">
+              <div class="toggle-info">
+                <h4>None / Not applicable</h4>
+                <p>No specific mobility or visual accommodations required.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chk-none" onchange="toggleAccessibility('accessibility_none', this)">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 28px; border-top: 1px dashed var(--border-color); padding-top: 18px;">
+            <label>Other Accessibility, Medical or Sensory Needs (Optional)</label>
+            <input type="text" id="inp-accessibility-custom" 
+                   value="" 
+                   placeholder="e.g. Ground floor room required, CPAP power outlet near bed, sensory-quiet accommodations, guide dog..."
+                   oninput="passport.accessibility_custom = this.value">
+          </div>
+        </section>
+
+        <!-- ==================== STEP 4: TRAVEL STYLES ==================== -->
+        <section id="step-section-4" class="step-section" style="display: none;">
+          <h2 class="step-title">Select your travel styles</h2>
+          <p class="step-subtitle">Choose at least 3 style flags. This heavily calibrates the points of interest (POIs) our travel generator populates in your final plan.</p>
+          
+          <div class="card-grid-3" id="style-grid">
+            <div class="select-card selected" onclick="toggleStyleCard('adventure', this)">
+              <div class="select-card-header"><div class="card-icon">&#9733;</div></div>
+              <div class="card-title">Adventure</div>
+            </div>
+            <div class="select-card selected" onclick="toggleStyleCard('nature', this)">
+              <div class="select-card-header"><div class="card-icon">&#9733;</div></div>
+              <div class="card-title">Nature</div>
+            </div>
+            <div class="select-card selected" onclick="toggleStyleCard('culture', this)">
+              <div class="select-card-header"><div class="card-icon">&#9733;</div></div>
+              <div class="card-title">Culture</div>
+            </div>
+            <div class="select-card" onclick="toggleStyleCard('history', this)">
+              <div class="select-card-header"><div class="card-icon">&#9733;</div></div>
+              <div class="card-title">History</div>
+            </div>
+            <div class="select-card selected" onclick="toggleStyleCard('food', this)">
+              <div class="select-card-header"><div class="card-icon">&#127860;</div></div>
+              <div class="card-title">Food</div>
+            </div>
+            <div class="select-card" onclick="toggleStyleCard('wine', this)">
+              <div class="select-card-header"><div class="card-icon">&#127863;</div></div>
+              <div class="card-title">Wine</div>
+            </div>
+            <div class="select-card" onclick="toggleStyleCard('shopping', this)">
+              <div class="select-card-header"><div class="card-icon">&#9733;</div></div>
+              <div class="card-title">Shopping</div>
+            </div>
+            <div class="select-card" onclick="toggleStyleCard('relaxation', this)">
+              <div class="select-card-header"><div class="card-icon">&#9733;</div></div>
+              <div class="card-title">Relaxation</div>
+            </div>
+            <div class="select-card" onclick="toggleStyleCard('spiritual', this)">
+              <div class="select-card-header"><div class="card-icon">&#9733;</div></div>
+              <div class="card-title">Spiritual</div>
+            </div>
+            <div class="select-card selected" onclick="toggleStyleCard('photography', this)">
+              <div class="select-card-header"><div class="card-icon">&#9733;</div></div>
+              <div class="card-title">Photography</div>
+            </div>
+          </div>
+
+          <div class="status-callout" style="margin-top: 24px;" id="style-badge">
+            <span>&#9432; <strong>5 styles selected</strong> — Great selection! This unlocks specialized local guide layers.</span>
+          </div>
+
+          <div class="form-group" style="margin-top: 28px; border-top: 1px dashed var(--border-color); padding-top: 18px;">
+            <label>Other Custom Activities or Niche Interests (Optional)</label>
+            <input type="text" id="inp-travel-styles-custom" 
+                   value="" 
+                   placeholder="e.g. Scuba diving, local pottery workshops, live jazz clubs, retro arcade exploration, vineyard tours..."
+                   oninput="passport.travel_styles_custom = this.value">
+          </div>
+        </section>
+
+        <!-- ==================== STEP 5: FOOD PREFERENCES ==================== -->
+        <section id="step-section-5" class="step-section" style="display: none;">
+          <h2 class="step-title">Culinary & food preferences</h2>
+          <p class="step-subtitle">We'll tune the culinary guide layers of your itinerary to match. Select dietary standards and flag any critical allergy constraints.</p>
+          
+          <div class="card-grid-3" style="margin-bottom: 24px;">
+            <div class="select-card selected" onclick="toggleDiet('vegetarian', this)">
+              <div class="select-card-header"><div class="card-title">Vegetarian</div><div class="card-radio"></div></div>
+              <div class="card-desc">No meat, poultry, or fish.</div>
+            </div>
+            <div class="select-card" onclick="toggleDiet('non_vegetarian', this)">
+              <div class="select-card-header"><div class="card-title">Non-vegetarian</div><div class="card-radio"></div></div>
+              <div class="card-desc">Includes poultry, red meat, seafood.</div>
+            </div>
+            <div class="select-card" onclick="toggleDiet('vegan', this)">
+              <div class="select-card-header"><div class="card-title">Vegan</div><div class="card-radio"></div></div>
+              <div class="card-desc">Entirely plant-based culinary tracks.</div>
+            </div>
+            <div class="select-card selected" onclick="toggleDiet('halal', this)">
+              <div class="select-card-header"><div class="card-title">Halal</div><div class="card-radio"></div></div>
+              <div class="card-desc">Strictly Halal-certified dining recommendations.</div>
+            </div>
+            <div class="select-card" onclick="toggleDiet('jain', this)">
+              <div class="select-card-header"><div class="card-title">Jain</div><div class="card-radio"></div></div>
+              <div class="card-desc">No meat, root vegetables, or garlic/onions.</div>
+            </div>
+            <div class="select-card" onclick="toggleDiet('other_custom', this)">
+              <div class="select-card-header"><div class="card-title">Other / Custom</div><div class="card-radio"></div></div>
+              <div class="card-desc">Specify custom dietary guidelines below.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Allergies & Medical Restrictions (Optional)</label>
+            <input type="text" id="inp-allergies" 
+                   value="Severe peanut allergy, prefers gluten-free options where possible" 
+                   placeholder="e.g. Severe peanut allergy, celiac disease (gluten-free), lactose intolerance"
+                   oninput="passport.allergies_restrictions = this.value">
+          </div>
+
+          <div class="form-group" style="margin-top: 18px; border-top: 1px dashed var(--border-color); padding-top: 18px;">
+            <label>Other Custom Dietary, Cuisine or Kitchen Preferences (Optional)</label>
+            <input type="text" id="inp-food-custom" 
+                   value="" 
+                   placeholder="e.g. Kosher, pescatarian, prefer organic farm-to-table restaurants, tea house ceremonies, no shellfish..."
+                   oninput="passport.food_custom = this.value">
+          </div>
+        </section>
+
+        <!-- ==================== STEP 6: CLOTHING PREFERENCES ==================== -->
+        <section id="step-section-6" class="step-section" style="display: none;">
+          <h2 class="step-title">Clothing & modest dress style</h2>
+          <p class="step-subtitle">Your wardrobe settings guide our local clothing recommendations, modesty guidelines for holy sites, and packing checklists.</p>
+          
+          <div class="form-group">
+            <label>Pack Styles</label>
+            <div class="tag-container" id="pack-styles-container">
+              <div class="pill-tag selected" onclick="togglePackStyle('western', this)">Western &#10003;</div>
+              <div class="pill-tag" onclick="togglePackStyle('traditional', this)">Traditional +</div>
+              <div class="pill-tag selected" onclick="togglePackStyle('casual', this)">Casual &#10003;</div>
+              <div class="pill-tag" onclick="togglePackStyle('winter', this)">Winter +</div>
+              <div class="pill-tag" onclick="togglePackStyle('summer', this)">Summer +</div>
+              <div class="pill-tag" onclick="togglePackStyle('formals', this)">Formals +</div>
+              <div class="pill-tag" onclick="togglePackStyle('other', this)">Other +</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px;" class="toggle-list">
+            <label style="font-size:13px; font-weight:700; color:var(--text-main);">Modesty & Weather Adaptations</label>
+            <div class="toggle-card active">
+              <div class="toggle-info">
+                <h4>Modest clothing filters</h4>
+                <p>Flag temple and local custom friendly outfits covering shoulders & knees.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="inp-modest" checked onchange="toggleModesty(this.checked)">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-card">
+              <div class="toggle-info">
+                <h4>Prioritize hot weather comfort</h4>
+                <p>Suggest light fabrics, breathable synthetics, and sun protection.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="inp-hotweather" onchange="toggleHotWeather(this.checked)">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 28px; border-top: 1px dashed var(--border-color); padding-top: 18px;">
+            <label>Other Wardrobe, Packing, or Event Attire Notes (Optional)</label>
+            <input type="text" id="inp-clothing-custom" 
+                   value="" 
+                   placeholder="e.g. Need formal evening attire for fine dining on Day 2, hiking boots for trails, laundry access required..."
+                   oninput="passport.clothing_custom = this.value">
+          </div>
+        </section>
+
+        <!-- ==================== STEP 7: BUDGET & 160+ MULTI-CURRENCY ==================== -->
+        <section id="step-section-7" class="step-section" style="display: none;">
+          <h2 class="step-title">Calibrate your budget footprint</h2>
+          <p class="step-subtitle">Select your currency and customize your purpose split-ups. The total budget will automatically sum up all allocations, with a round-off option and live USD conversion.</p>
+          
+          <div style="background: white; border: 1.5px solid var(--border-color); border-radius: 14px; padding: 28px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); margin-top: 20px;">
+            <!-- Top Controls: Currency & Overall Budget Input -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; align-items: start; margin-bottom: 24px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-size:13px; font-weight:800; color:var(--text-main); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  <span>🌍 Country Currency (160+ World Currencies)</span>
+                </label>
+                <select id="inp-budget-currency" style="width:100%; font-weight:700; height:50px; border-radius:10px; border:1.5px solid var(--border-color); padding: 0 14px; font-size:14px;" onchange="handleCurrencyChange(this.value)">
+                  <option value="INR" selected>INR (₹) — Indian Rupee</option>
+                  <option value="USD">USD ($) — US Dollar</option>
+                  <option value="EUR">EUR (€) — Euro</option>
+                  <option value="GBP">GBP (£) — British Pound</option>
+                  <option value="AED">AED (د.إ) — UAE Dirham</option>
+                  <option value="CAD">CAD (C$) — Canadian Dollar</option>
+                  <option value="AUD">AUD (A$) — Australian Dollar</option>
+                  <option value="SGD">SGD (S$) — Singapore Dollar</option>
+                  <option value="JPY">JPY (¥) — Japanese Yen</option>
+                  <option value="SAR">SAR (﷼) — Saudi Riyal</option>
+                  <option value="QAR">QAR (QR) — Qatari Riyal</option>
+                  <option value="KWD">KWD (KD) — Kuwaiti Dinar</option>
+                  <option value="BHD">BHD (BD) — Bahraini Dinar</option>
+                  <option value="OMR">OMR (OMR) — Omani Rial</option>
+                  <option value="CHF">CHF (Fr) — Swiss Franc</option>
+                  <option value="CNY">CNY (¥) — Chinese Yuan</option>
+                  <option value="HKD">HKD (HK$) — Hong Kong Dollar</option>
+                  <option value="NZD">NZD (NZ$) — New Zealand Dollar</option>
+                  <option value="THB">THB (฿) — Thai Baht</option>
+                  <option value="MYR">MYR (RM) — Malaysian Ringgit</option>
+                  <option value="IDR">IDR (Rp) — Indonesian Rupiah</option>
+                  <option value="PHP">PHP (₱) — Philippine Peso</option>
+                  <option value="VND">VND (₫) — Vietnamese Dong</option>
+                  <option value="KRW">KRW (₩) — South Korean Won</option>
+                  <option value="PKR">PKR (₨) — Pakistani Rupee</option>
+                  <option value="BDT">BDT (৳) — Bangladeshi Taka</option>
+                  <option value="LKR">LKR (Rs) — Sri Lankan Rupee</option>
+                  <option value="NPR">NPR (Rs) — Nepalese Rupee</option>
+                  <option value="BRL">BRL (R$) — Brazilian Real</option>
+                  <option value="ZAR">ZAR (R) — South African Rand</option>
+                  <option value="TRY">TRY (₺) — Turkish Lira</option>
+                  <option value="RUB">RUB (₽) — Russian Ruble</option>
+                  <option value="MXN">MXN (Mex$) — Mexican Peso</option>
+                </select>
+                <span style="font-size:12px; color:var(--text-muted); margin-top:6px; display:block;">Select your home currency for instant automatic conversion</span>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-size:13px; font-weight:800; color:var(--text-main); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  <span>💳 Custom Range / Direct Amount (Optional)</span>
+                </label>
+                <input type="text" id="inp-budget-custom" style="height:50px; font-size:15px; font-weight:600; border-radius:10px; border:1.5px solid var(--border-color); padding: 0 14px; width:100%;"
+                       value="50000" 
+                       placeholder="e.g. 50000 or 4000 - 8500 per day"
+                       oninput="handleBudgetCustom(this.value)">
+                <span style="font-size:12px; color:var(--text-muted); margin-top:6px; display:block;">Or fine-tune using purpose split-ups below</span>
+              </div>
+            </div>
+
+            <!-- Purpose & Expense Split-ups Section -->
+            <div style="border-top: 1px dashed var(--border-color); padding-top: 20px; margin-top: 20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 14px;">
+                <div>
+                  <h3 style="font-size:15px; font-weight:800; color:var(--primary); margin:0;">📊 Purpose & Expense Split-ups</h3>
+                  <p style="font-size:12px; color:var(--text-muted); margin:4px 0 0 0;">Allocate specific amounts for different travel purposes. The total is calculated automatically.</p>
+                </div>
+                <button type="button" class="btn-sm" onclick="addCustomSplitupRow()" style="cursor:pointer; background:var(--primary-light); color:var(--primary); font-weight:700; border:none; padding:8px 14px; border-radius:8px;">+ Add Custom Purpose</button>
+              </div>
+
+              <div id="budget-splitup-list" style="display:flex; flex-direction:column; gap:12px;">
+                <!-- Row 1: Accommodation -->
+                <div class="splitup-row" style="display:flex; gap:12px; align-items:center; background:#F8FAF9; padding:12px 16px; border-radius:10px; border:1px solid var(--border-color);">
+                  <div style="flex:2; font-size:13px; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                    <span>🏨</span>
+                    <input type="text" class="split-purpose" value="Accommodation / Stays" style="font-weight:700; border:none; background:transparent; width:100%; font-size:13px;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                    <span class="curr-symbol" style="font-weight:800; color:var(--text-muted);">₹</span>
+                    <input type="number" class="split-amount" value="20000" min="0" step="500" style="height:40px; border-radius:8px; border:1.5px solid var(--border-color); padding:0 10px; width:100%; font-weight:700;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <button type="button" onclick="removeSplitupRow(this)" style="background:none; border:none; color:#C62828; font-size:18px; cursor:pointer; padding:0 6px;">&times;</button>
+                </div>
+
+                <!-- Row 2: Flights & Transit -->
+                <div class="splitup-row" style="display:flex; gap:12px; align-items:center; background:#F8FAF9; padding:12px 16px; border-radius:10px; border:1px solid var(--border-color);">
+                  <div style="flex:2; font-size:13px; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                    <span>✈️</span>
+                    <input type="text" class="split-purpose" value="Flights & Local Transit" style="font-weight:700; border:none; background:transparent; width:100%; font-size:13px;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                    <span class="curr-symbol" style="font-weight:800; color:var(--text-muted);">₹</span>
+                    <input type="number" class="split-amount" value="15000" min="0" step="500" style="height:40px; border-radius:8px; border:1.5px solid var(--border-color); padding:0 10px; width:100%; font-weight:700;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <button type="button" onclick="removeSplitupRow(this)" style="background:none; border:none; color:#C62828; font-size:18px; cursor:pointer; padding:0 6px;">&times;</button>
+                </div>
+
+                <!-- Row 3: Food & Dining -->
+                <div class="splitup-row" style="display:flex; gap:12px; align-items:center; background:#F8FAF9; padding:12px 16px; border-radius:10px; border:1px solid var(--border-color);">
+                  <div style="flex:2; font-size:13px; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                    <span>🍽️</span>
+                    <input type="text" class="split-purpose" value="Food, Cafes & Dining" style="font-weight:700; border:none; background:transparent; width:100%; font-size:13px;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                    <span class="curr-symbol" style="font-weight:800; color:var(--text-muted);">₹</span>
+                    <input type="number" class="split-amount" value="8000" min="0" step="500" style="height:40px; border-radius:8px; border:1.5px solid var(--border-color); padding:0 10px; width:100%; font-weight:700;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <button type="button" onclick="removeSplitupRow(this)" style="background:none; border:none; color:#C62828; font-size:18px; cursor:pointer; padding:0 6px;">&times;</button>
+                </div>
+
+                <!-- Row 4: Sightseeing -->
+                <div class="splitup-row" style="display:flex; gap:12px; align-items:center; background:#F8FAF9; padding:12px 16px; border-radius:10px; border:1px solid var(--border-color);">
+                  <div style="flex:2; font-size:13px; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                    <span>🎟️</span>
+                    <input type="text" class="split-purpose" value="Sightseeing & Activities" style="font-weight:700; border:none; background:transparent; width:100%; font-size:13px;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                    <span class="curr-symbol" style="font-weight:800; color:var(--text-muted);">₹</span>
+                    <input type="number" class="split-amount" value="5000" min="0" step="500" style="height:40px; border-radius:8px; border:1.5px solid var(--border-color); padding:0 10px; width:100%; font-weight:700;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <button type="button" onclick="removeSplitupRow(this)" style="background:none; border:none; color:#C62828; font-size:18px; cursor:pointer; padding:0 6px;">&times;</button>
+                </div>
+
+                <!-- Row 5: Shopping / Emergency -->
+                <div class="splitup-row" style="display:flex; gap:12px; align-items:center; background:#F8FAF9; padding:12px 16px; border-radius:10px; border:1px solid var(--border-color);">
+                  <div style="flex:2; font-size:13px; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                    <span>🛍️</span>
+                    <input type="text" class="split-purpose" value="Shopping & Emergency Reserve" style="font-weight:700; border:none; background:transparent; width:100%; font-size:13px;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                    <span class="curr-symbol" style="font-weight:800; color:var(--text-muted);">₹</span>
+                    <input type="number" class="split-amount" value="2000" min="0" step="500" style="height:40px; border-radius:8px; border:1.5px solid var(--border-color); padding:0 10px; width:100%; font-weight:700;" oninput="calculateSplitupTotal()">
+                  </div>
+                  <button type="button" onclick="removeSplitupRow(this)" style="background:none; border:none; color:#C62828; font-size:18px; cursor:pointer; padding:0 6px;">&times;</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Total Calculation & Round-Off Control Bar -->
+            <div style="margin-top: 24px; background:#F0F7F5; border:1.5px solid var(--primary-border); padding:18px 24px; border-radius:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+              <div>
+                <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Calculated Total Sum of Split-ups:</div>
+                <div style="font-size:24px; font-weight:800; color:var(--primary); margin-top:2px;" id="splitup-total-display">INR ₹50,000</div>
+              </div>
+
+              <!-- Round Off Option -->
+              <div style="display:flex; align-items:center; gap:10px; background:white; padding:10px 16px; border-radius:10px; border:1px solid var(--border-color);">
+                <input type="checkbox" id="chk-roundoff" style="width:18px; height:18px; cursor:pointer;" onchange="toggleRoundOff(this.checked)">
+                <label for="chk-roundoff" style="font-size:13px; font-weight:700; color:var(--text-main); cursor:pointer; margin-bottom:0;">
+                  🔄 Round off total budget (to nearest ₹500 / ₹1,000)
+                </label>
+              </div>
+            </div>
+
+            <!-- Standardized Conversion Banner -->
+            <div id="budget-conversion-badge" style="margin-top: 16px; background:var(--accent-mint); border:1.5px solid var(--primary-border); padding:16px 20px; border-radius:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+              <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; color:var(--primary);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                <span id="conversion-text">Standardized for Global Itinerary Planning: ≈ $595 USD (Converted from INR ₹)</span>
+              </div>
+              <span style="font-size:12px; color:var(--text-muted); font-weight:600;">Calibrates international hotels, dining & activities</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== STEP 8: SUMMARY REVIEW ==================== -->
+        <section id="step-section-8" class="step-section" style="display: none;">
+          <h2 class="step-title">Review your travel passport</h2>
+          <p class="step-subtitle">Your AI generation profile is fully configured. Review the compiled metadata below before launching your itinerary generator.</p>
+          
+          <div class="summary-grid" id="summary-cards-container">
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>Personal Info</h4>
+                <button class="btn-edit" onclick="goToStep(1)">Edit</button>
+              </div>
+              <div class="summary-headline" id="sum-personal-headline">Evelyn Thorne, 29 • Female (Indian)</div>
+              <div class="summary-subtext" id="sum-personal-subtext">Home: Mumbai • English, Hindi • Note: Celebrating 5th wedding anniversary</div>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>Traveler Type</h4>
+                <button class="btn-edit" onclick="goToStep(2)">Edit</button>
+              </div>
+              <div class="summary-headline" id="sum-type-headline">COUPLE Configuration</div>
+              <div class="summary-subtext" id="sum-type-subtext">Intimate private tour routes, romantic stays, fine dining</div>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>Accessibility</h4>
+                <button class="btn-edit" onclick="goToStep(3)">Edit</button>
+              </div>
+              <div class="summary-headline" id="sum-access-headline">Mobility / Wheelchair Access</div>
+              <div class="summary-subtext" id="sum-access-subtext">Step-free entry, elevators, prioritized accessibility filters</div>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>Travel Style</h4>
+                <button class="btn-edit" onclick="goToStep(4)">Edit</button>
+              </div>
+              <div class="summary-headline" id="sum-style-headline">ADVENTURE, NATURE, CULTURE, FOOD, PHOTOGRAPHY</div>
+              <div class="summary-subtext" id="sum-style-subtext">5 style layers calibrated for POI selection</div>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>Food Preferences</h4>
+                <button class="btn-edit" onclick="goToStep(5)">Edit</button>
+              </div>
+              <div class="summary-headline" id="sum-food-headline">VEGETARIAN, HALAL</div>
+              <div class="summary-subtext" id="sum-food-subtext">Allergies: Severe peanut allergy, prefers gluten-free options where possible</div>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>Clothing Pack</h4>
+                <button class="btn-edit" onclick="goToStep(6)">Edit</button>
+              </div>
+              <div class="summary-headline" id="sum-clothing-headline">WESTERN, CASUAL wear</div>
+              <div class="summary-subtext" id="sum-clothing-subtext">Modesty filters active: temple-appropriate shoulder & knee coverage</div>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>Budget Footprint</h4>
+                <button class="btn-edit" onclick="goToStep(7)">Edit</button>
+              </div>
+              <div class="summary-headline" id="sum-budget-headline">MODERATE Tier (₹4,000 – ₹8,500 / day)</div>
+              <div class="summary-subtext" id="sum-budget-subtext">Preferred: INR 50000 [≈ $595 USD]</div>
+            </div>
+
+            <div class="status-callout" style="grid-column: 1 / -1; margin-bottom:0;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Itinerary algorithm primed and ready to calculate.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <footer class="content-footer">
+          <button id="back-btn" class="btn-back" onclick="prevStep()" style="visibility: hidden;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back
+          </button>
+          <button id="next-btn" class="btn-continue" onclick="nextStep()">
+            Continue
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <!-- Sign In & Register Modal -->
+  <div id="auth-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card" style="max-width: 440px; width: 90%; background: white; border-radius: 16px; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <h3 id="modal-title" style="font-size:20px; font-weight:800; color:var(--text-main);">Welcome to Travel AI</h3>
+        <button class="btn-close" onclick="hideAuthModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+
+      <div class="auth-tabs" style="display:flex; gap:8px; margin-bottom:20px; border-bottom:1.5px solid var(--border-color); padding-bottom:12px;">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')" style="flex:1; padding:10px; font-weight:700; border:none; border-radius:8px; cursor:pointer; background:var(--primary-light); color:var(--primary);">Sign In</button>
+        <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')" style="flex:1; padding:10px; font-weight:700; border:none; border-radius:8px; cursor:pointer; background:#F0F4F2; color:var(--text-muted);">Create Account</button>
+      </div>
+
+      <div id="auth-error-msg" style="display:none; padding:10px 14px; margin-bottom:14px; background:#FFEBEE; color:#C62828; border-radius:8px; font-size:13px; font-weight:600;"></div>
+      <div id="auth-success-msg" style="display:none; padding:10px 14px; margin-bottom:14px; background:#E8F5E9; color:#2E7D32; border-radius:8px; font-size:13px; font-weight:600;"></div>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+        <div class="form-group" id="group-fullname" style="display: none; margin-bottom:14px;">
+          <label style="font-size:13px; font-weight:700; display:block; margin-bottom:6px;">Full Name</label>
+          <input type="text" id="auth-name" placeholder="e.g. Evelyn Thorne" style="width:100%; padding:12px; border:1.5px solid var(--border-color); border-radius:8px;">
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="font-size:13px; font-weight:700; display:block; margin-bottom:6px;">Email Address</label>
+          <input type="email" id="auth-email" required placeholder="user@example.com" style="width:100%; padding:12px; border:1.5px solid var(--border-color); border-radius:8px;">
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label style="font-size:13px; font-weight:700; display:block; margin-bottom:6px;">Password</label>
+          <input type="password" id="auth-password" required minlength="6" placeholder="At least 6 characters" style="width:100%; padding:12px; border:1.5px solid var(--border-color); border-radius:8px;">
+        </div>
+        <button type="submit" id="auth-submit-btn" class="btn-continue w-full" style="width:100%; justify-content:center; padding:14px; font-size:15px; font-weight:700;">Sign In</button>
+      </form>
+
+      <div style="text-align:center; margin-top:16px;">
+        <button type="button" onclick="hideAuthModal()" style="background:none; border:none; color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline;">
+          Skip & Continue as Guest
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trip Planner & Result Modal -->
+  <div id="trip-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card large" style="max-width:760px; width:92%; max-height:90vh; overflow-y:auto; background:white; border-radius:16px; padding:32px; box-shadow:0 20px 50px rgba(0,0,0,0.25);">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border-color); padding-bottom:14px;">
+        <h3 id="trip-modal-title" style="font-size:22px; font-weight:800; color:var(--primary);">Plan Your Personalized AI Trip</h3>
+        <button class="btn-close" onclick="hideTripModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <div id="trip-modal-body" class="trip-content"></div>
+    </div>
+  </div>
+
+  <!-- Inlined, zero-latency, resilient application script -->
+  <script src="/static/app.js"></script>
+</body>
+</html>

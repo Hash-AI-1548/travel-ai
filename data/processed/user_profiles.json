@@ -1,0 +1,49 @@
+[
+  {
+    "user_id": 1,
+    "full_name": "Euro Traveler",
+    "age": 32,
+    "gender": null,
+    "nationality": "French",
+    "home_city": null,
+    "personal_notes": "Summer holiday trip",
+    "profile_picture_url": null,
+    "languages_spoken": [
+      "English"
+    ],
+    "traveler_type": "couple",
+    "traveler_type_custom": "Couple vacation",
+    "accessibility_mobility": false,
+    "accessibility_visual": false,
+    "accessibility_hearing": false,
+    "accessibility_senior": false,
+    "accessibility_child": false,
+    "accessibility_none": false,
+    "accessibility_custom": null,
+    "travel_styles": [
+      "culture",
+      "nature",
+      "food_wine",
+      "photography"
+    ],
+    "travel_styles_custom": null,
+    "dietary_standards": [
+      "vegetarian"
+    ],
+    "allergies_restrictions": "None",
+    "food_custom": null,
+    "pack_styles": [
+      "casual"
+    ],
+    "modest_clothing": true,
+    "prioritize_hot_weather": false,
+    "clothing_custom": null,
+    "budget_tier": "moderate",
+    "budget_currency": "EUR",
+    "budget_custom": "1500 - 2000",
+    "budget_standardized_usd": "\u2248 $1,630 \u2013 $2,174 USD (Converted from EUR)",
+    "is_completed": false,
+    "completion_percentage": 71,
+    "updated_at": "2026-08-22T17:53:07.030113"
+  }
+]
