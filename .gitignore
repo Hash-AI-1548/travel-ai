@@ -1,0 +1,20 @@
+# Python & Virtual Environments
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest & Testing caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local databases & uploads
+test_travel_ai.db
+.tmp_edge/
+
+# OS specific files
+.DS_Store
+Thumbs.db
